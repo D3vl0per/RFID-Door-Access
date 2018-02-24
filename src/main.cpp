@@ -39,16 +39,18 @@
 #include <UniversalTelegramBot.h>
 #include <WiFiClientSecure.h>
 #define BOTtoken "424218094:AAFxTF_GKfTA-o9kRuPnEF-SpPsPFCff2mI"
+#define DEADBOLT 6
 
 const int timezone = 1;
 bool debug = true;
 bool nfcModuleHealty = true;
+bool lockoverride = false;
 constexpr uint8_t RST_PIN = 4;
 constexpr uint8_t SDA_PIN = 2;
 MFRC522 mfrc522(SDA_PIN, RST_PIN);
 int wifiStatus;
-const char* ssid     = "................";
-const char* password = "...............";
+const char* ssid     = "Airodump-ng";
+const char* password = "GetTheFuckOut20181222";
 String ip_address, subnet_mask, gateway, channel;
 
 File data; //SD Card modul
@@ -77,6 +79,7 @@ void setup() {
                 delay(500);
         }
 
+        pinMode(DEADBOLT, INPUT);
 }
 bool isNfcModuleIsWorking(bool healty){
         //Menet közbeni NFC szenzor ellenőrzés
@@ -228,11 +231,13 @@ void handleNewMessages(int numNewMessages) {
 
                 else if (text == "/status"){
                   String status = "";
-                  status= status +"\n\nConnected wifi name: "+ ssid;
-                  status= status +"\nWifi Channel: " + channel;
-                  status= status +"\nLocal IP address: " + ip_address;
-                  status= status +"\nSubnet mask: " + subnet_mask;
-                  status= status +"\nDefault gateway: " + gateway;
+                  status = status +"\n\nKapcsolódott wifi: "+ ssid;
+                  status = status +"\nWifi csatorna: " + channel;
+                  status = status +"\nAz eszköz IP címe: " + ip_address;
+                  status = status +"\nAlhálózati maszk: " + subnet_mask;
+                  status = status +"\nRouter IP: " + gateway;
+                  if (lockoverride) status = status + "Lockoverride: AKTÍV";
+                  else status = status + "Lockoverride: AKTÍV";
                   bot.sendMessage(chat_id, status, "Markdown");
                 }
                 else if (text == "/wifi"){
@@ -256,27 +261,25 @@ void handleNewMessages(int numNewMessages) {
                 }
                 else if (text == "/open"){
                   String open = "";
-                  open = open + "\nAz ajtó ideiglenesen kinyitva!"
+                  open = open + "\nAz ajtó ideiglenesen kinyitva!";
                   bot.sendMessage(chat_id, open, "Markdown");
+
                 }
                 else if (text == "/lockoverride"){
                   String lock="";
-                  lock = lock + "\nAz ajtó bezárva tartása!!"
-                  lock = lock + "\nFIGYELEM: A JELENLEGI FUNKCIÓ AKTIVÁLÁSA UTÁN NEM LEHET KÁRTYÁVAL KINYITNI AZ AJTÓT!!!"
-                  lock = lock + "\nAZ /open PARANCS FELÜLÍRJA A LOCKOVERRIDE-OT!"
-                  bot.sendMessage(chat_id, , "Markdown");
+                  lock = lock + "\nAz ajtó bezárva tartása!!";
+                  lock = lock + "\nFIGYELEM: A JELENLEGI FUNKCIÓ AKTIVÁLÁSA UTÁN NEM LEHET KÁRTYÁVAL KINYITNI AZ AJTÓT!!!";
+                  lock = lock + "\nAZ /open PARANCS FELÜLÍRJA A LOCKOVERRIDE-OT!";
+                  lockoverride = true;
+                  bot.sendMessage(chat_id, lock, "Markdown");
                 }
+
                 else{
                   String error = "Ilyen parancs nem létezik!";
                   bot.sendMessage(chat_id, error, "Markdown");
                 }
 
         }
-}
-
-void isRelay(){
-
-
 }
 ////////////////////////////////////////////////////////////////////////////////
 void loop() {
