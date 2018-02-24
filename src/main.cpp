@@ -38,7 +38,7 @@
 #include <ESP8266WiFi.h>
 #include <UniversalTelegramBot.h>
 #include <WiFiClientSecure.h>
-#define BOTtoken "424218094:AAFxTF_GKfTA-o9kRuPnEF-SpPsPFCff2mI"
+#define BOTtoken "424218094:AAFxTF_GKfTA-o9kRuPnEF-SpPsPFCff2mI" //Jelenlegi élő API: @rfidsoortester_bot
 #define DEADBOLT 6
 
 const int timezone = 1;
@@ -49,9 +49,10 @@ constexpr uint8_t RST_PIN = 4;
 constexpr uint8_t SDA_PIN = 2;
 MFRC522 mfrc522(SDA_PIN, RST_PIN);
 int wifiStatus;
-const char* ssid     = "Airodump-ng";
-const char* password = "GetTheFuckOut20181222";
+const char* ssid     = "....................";
+const char* password = "....................";
 String ip_address, subnet_mask, gateway, channel;
+String dev[] = {"499406562"};
 
 File data; //SD Card modul
 
@@ -65,6 +66,7 @@ long Bot_lasttime;
 WiFiClientSecure client;
 UniversalTelegramBot bot(BOTtoken, client);
 void setup() {
+      
         SPI.begin();      // SPI inicializálás
         mfrc522.PCD_Init(); // MFRC522 kártya inicializálás
         WiFi.begin(ssid, password);
@@ -112,7 +114,9 @@ void isAllRandomData(){
 
 /*
 String isNFCRead(){
+  MFRC522::MIFARE_Key key;
   MFRC522::StatusCode status;
+
   for (byte i = 0; i < 6; i++) {
     key.keyByte[i] = 0xFF;
   }
@@ -129,8 +133,6 @@ String isNFCRead(){
 
 
 
-
-
   mfrc522.PICC_HaltA(); // PICC lezárása
   mfrc522.PCD_StopCrypto1();  // PCD titkosítás lezárása
 
@@ -140,6 +142,8 @@ String isNFCRead(){
 /*
 String isNFCWrite(){
   MFRC522::StatusCode status;
+  MFRC522::MIFARE_Key key;
+
   for (byte i = 0; i < 6; i++) {
     key.keyByte[i] = 0xFF;
   }
@@ -203,7 +207,6 @@ void wifiConnection(){
         while (WiFi.status() != WL_CONNECTED) {
                 delay(500);
         }
-
         //Network inforamation
         ip_address = WiFi.localIP().toString();
         subnet_mask = WiFi.subnetMask().toString();
@@ -274,6 +277,38 @@ void handleNewMessages(int numNewMessages) {
                   bot.sendMessage(chat_id, lock, "Markdown");
                 }
 
+                else if (text == "/restart"){
+                  String restart = "FIGYELEM: EZ EGY VESZÉLYES PARANCS!";
+                  bool asd = true;
+                  for (int i = 0; i < sizeof(dev); i++) {
+                    if (dev[i].equals(chat_id)){
+                      bot.sendMessage(chat_id, restart, "Markdown");
+                      asd = false;
+                      ESP.restart();
+                    }
+                  }
+                  if (asd){
+                    restart = restart + "CSAK A FEJLESZTŐK HASZNÁLHATJÁK EZT A PARANCSOT!";
+                    bot.sendMessage(chat_id, restart, "Markdown");
+                  }
+                }
+
+                else if (text == "/reset"){
+                  String reset = "FIGYELEM: EZ EGY VESZÉLYES PARANCS!";
+                  bool asd = true;
+                  for (int i = 0; i < sizeof(dev); i++) {
+                    if (dev[i].equals(chat_id)){
+                      bot.sendMessage(chat_id, reset, "Markdown");
+                      asd = false;
+                      ESP.reset();
+                    }
+                  }
+                  if (asd){
+                    restart = reset + "CSAK A FEJLESZTŐK HASZNÁLHATJÁK EZT A PARANCSOT!";
+                    bot.sendMessage(chat_id, reset, "Markdown");
+                  }
+                }
+
                 else{
                   String error = "Ilyen parancs nem létezik!";
                   bot.sendMessage(chat_id, error, "Markdown");
@@ -299,11 +334,13 @@ void loop() {
                         Bot_lasttime = millis();
         }
 
+        
         //Új kártya detektálása
         if ( ! mfrc522.PICC_IsNewCardPresent()) return;
 
         //Kártya érzékelése
         if ( ! mfrc522.PICC_ReadCardSerial()) return;
+
 
         for (byte i = 0; i < 4; i++) cardUid += String(mfrc522.uid.uidByte[i]); //UID beolvasása
 
