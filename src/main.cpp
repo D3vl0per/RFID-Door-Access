@@ -104,6 +104,8 @@ void isAllRandomData(){
         card_data.toUpperCase();
         card_data += "FF";
         //FIXME: uuidStr átalakítása byte formátumuvá
+
+
         //Random generált blokk
         ESP8266TrueRandom.uuid(uuidNumber);
         block = ESP8266TrueRandom.random(1,17);
@@ -177,7 +179,11 @@ void isAllRandomData(){
       cardNumber += ".dat";
       data = SD.open(cardNumber);
 
-      if (data){}
+      if (data){
+
+
+
+      }
       myFile.close();
    }
  */
@@ -188,7 +194,11 @@ void isAllRandomData(){
       cardNumber += ".dat"
       data = SD.open(cardNumber, FILE_WRITE);
 
-      if (data){}
+      if (data){
+
+
+
+      }
       myFile.close();
    }
  */
@@ -294,7 +304,7 @@ void handleNewMessages(int numNewMessages) {
                                 }
                         }
                         if (asd) {
-                                restart = reset + "CSAK A FEJLESZTŐK HASZNÁLHATJÁK EZT A PARANCSOT!";
+                                reset= reset + "CSAK A FEJLESZTŐK HASZNÁLHATJÁK EZT A PARANCSOT!";
                                 bot.sendMessage(chat_id, reset, "Markdown");
                         }
                 }
@@ -324,7 +334,7 @@ void loop() {
                 Bot_lasttime = millis();
         }
 
-        
+        /*
            //Új kártya detektálása
            if ( ! mfrc522.PICC_IsNewCardPresent()) return;
 
@@ -333,6 +343,7 @@ void loop() {
 
 
            for (byte i = 0; i < 4; i++) cardUid += String(mfrc522.uid.uidByte[i]); //UID beolvasása
+         */
 
 
 
