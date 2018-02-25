@@ -1,4 +1,7 @@
 language: python
+cache:
+    directories:
+        - "~/.platformio"
 python:
     - "2.7"
 install:
