@@ -6,4 +6,4 @@ install:
     - platformio update
     - platformio lib -g install 63 1477 79 44 1262 64
 script:
-    - platformio run --board=nodemcuv2
+    - platformio ci --board=nodemcuv2
