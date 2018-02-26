@@ -215,7 +215,7 @@ void wifiConnection(){
         //Network inforamation
 }
 
-void isGuestPrivilege(String text, String chat_id)){
+void isGuestPrivilege(String text, String chat_id){
         if (text=="/help") {
                 String welcome = "";
                 welcome = welcome + "/help : Az összes parancs kiíratása \n";
@@ -230,12 +230,12 @@ void isGuestPrivilege(String text, String chat_id)){
                 bot.sendMessage(chat_id, knock, "Markdown");
         }
         else {
-          String asd = "Ilyen paranacs vagy nem létezik, vagy nincsen megfelelő jogosultsága a futtatáshoz!"
+          String asd = "Ilyen paranacs vagy nem létezik, vagy nincsen megfelelő jogosultsága a futtatáshoz!";
           bot.sendMessage(chat_id, asd, "Markdown");
         }
 
 }
-void isMemberPrivilege(String text, String chat_id)){
+void isMemberPrivilege(String text, String chat_id){
         if (text=="/help") {
                 String welcome = "";
                 welcome = welcome + "/help : Az összes parancs kiíratása \n";
@@ -284,11 +284,11 @@ void isMemberPrivilege(String text, String chat_id)){
 
         }
         else{
-          String asd = "Ilyen paranacs vagy nem létezik, vagy nincsen megfelelő jogosultsága a futtatáshoz!"
+          String asd = "Ilyen paranacs vagy nem létezik, vagy nincsen megfelelő jogosultsága a futtatáshoz!";
           bot.sendMessage(chat_id, asd, "Markdown");
         }
 }
-void isDeveloperPrivilege(String text, String chat_id)){
+void isDeveloperPrivilege(String text, String chat_id){
         if (text=="/help") {
                 String welcome = "";
                 welcome = welcome + "/help : Az összes parancs kiíratása \n";
@@ -359,7 +359,7 @@ void isDeveloperPrivilege(String text, String chat_id)){
         }
 
         else{
-          String asd = "Ilyen paranacs vagy nem létezik, vagy nincsen megfelelő jogosultsága a futtatáshoz!"
+          String asd = "Ilyen paranacs vagy nem létezik, vagy nincsen megfelelő jogosultsága a futtatáshoz!";
           bot.sendMessage(chat_id, asd, "Markdown");
         }
 }
@@ -442,7 +442,7 @@ void isOwnerPrivilege(String text, String chat_id){
                 ESP.reset();
         }
         else{
-          String asd = "Ilyen paranacs nem létezik!"
+          String asd = "Ilyen paranacs nem létezik!";
           bot.sendMessage(chat_id, asd, "Markdown");
         }
 }
