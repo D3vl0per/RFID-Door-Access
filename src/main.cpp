@@ -214,6 +214,240 @@ void wifiConnection(){
         channel = WiFi.channel();
         //Network inforamation
 }
+
+void isGuestPrivilege(String text, String chat_id)){
+        if (text=="/help") {
+                String welcome = "";
+                welcome = welcome + "/help : Az összes parancs kiíratása \n";
+                welcome = welcome + "/knock : Kopogás \n";
+
+                bot.sendMessage(chat_id, welcome, "Markdown");
+        }
+        if (text=="/knock") {
+                String knock = "";
+                knock = knock + "\nKopogtál!";
+
+                bot.sendMessage(chat_id, knock, "Markdown");
+        }
+        else {
+          String asd = "Ilyen paranacs vagy nem létezik, vagy nincsen megfelelő jogosultsága a futtatáshoz!"
+          bot.sendMessage(chat_id, asd, "Markdown");
+        }
+
+}
+void isMemberPrivilege(String text, String chat_id)){
+        if (text=="/help") {
+                String welcome = "";
+                welcome = welcome + "/help : Az összes parancs kiíratása \n";
+                welcome = welcome + "/status : Az eszköz állapotának lekérdezése\n";
+                welcome = welcome + "/wifi : A jelenlegi WiFi jelszó lekérdezése\n";
+                welcome = welcome + "/open : Az ajtó kinyitása 3mp-ig\n";
+
+
+                bot.sendMessage(chat_id, welcome, "Markdown");
+        }
+
+        else if (text == "/status") {
+                String status = "";
+                status = status +"\n\nKapcsolódott wifi: "+ ssid;
+                status = status +"\nWifi csatorna: " + channel;
+                status = status +"\nAz eszköz IP címe: " + ip_address;
+                status = status +"\nAlhálózati maszk: " + subnet_mask;
+                status = status +"\nRouter IP: " + gateway;
+                if (lockoverride) status = status + "Lockoverride: AKTÍV";
+                else status = status + "Lockoverride: AKTÍV";
+                bot.sendMessage(chat_id, status, "Markdown");
+        }
+        else if (text == "/wifi") {
+                String wifi = "";
+                wifi = wifi + "\nIgen, van wifi! Ezért működöm én is!";
+                wifi = wifi + "\nTe is szeretnéd tudni a wifi jelszót?";
+                wifi = wifi + "\n Írd be, hogy /wifipass, talán ez segít!";
+                bot.sendMessage(chat_id, wifi, "Markdown");
+        }
+        else if (text == "/wifipass") {
+                String wifi = "";
+                wifi = wifi + "\nTe aztán valóban szeretnéd azt a wifi jelszót!";
+                wifi = wifi + "\nBiztosan kell neked?? Ugyan mi olyan fontos, hogy internetre kapcsolódjál?";
+                wifi = wifi + "\nDe te tudod:/wifiaccess";
+                bot.sendMessage(chat_id, wifi, "Markdown");
+        }
+        else if (text == "/wifiaccess") {
+                String wifi = "Wifi pass:12345678";
+                wifi = wifi + "\n Na itt van! Használd egészséggel!";
+                bot.sendMessage(chat_id, wifi, "Markdown");
+        }
+        else if (text == "/open") {
+                String open = "";
+                open = open + "\nAz ajtó ideiglenesen kinyitva!";
+                bot.sendMessage(chat_id, open, "Markdown");
+
+        }
+        else{
+          String asd = "Ilyen paranacs vagy nem létezik, vagy nincsen megfelelő jogosultsága a futtatáshoz!"
+          bot.sendMessage(chat_id, asd, "Markdown");
+        }
+}
+void isDeveloperPrivilege(String text, String chat_id)){
+        if (text=="/help") {
+                String welcome = "";
+                welcome = welcome + "/help : Az összes parancs kiíratása \n";
+                welcome = welcome + "/status : Az eszköz állapotának lekérdezése\n";
+                welcome = welcome + "/wifi : A jelenlegi WiFi jelszó lekérdezése\n";
+                welcome = welcome + "/open : Az ajtó kinyitása 3mp-ig\n";
+                welcome = welcome + "/lockoverride : Az ajtó kártyás beléptetésének felülbírálása";
+
+                bot.sendMessage(chat_id, welcome, "Markdown");
+        }
+
+        else if (text == "/status") {
+                String status = "";
+                status = status +"\n\nKapcsolódott wifi: "+ ssid;
+                status = status +"\nWifi csatorna: " + channel;
+                status = status +"\nAz eszköz IP címe: " + ip_address;
+                status = status +"\nAlhálózati maszk: " + subnet_mask;
+                status = status +"\nRouter IP: " + gateway;
+                if (lockoverride) status = status + "Lockoverride: AKTÍV";
+                else status = status + "Lockoverride: AKTÍV";
+                bot.sendMessage(chat_id, status, "Markdown");
+        }
+        else if (text == "/wifi") {
+                String wifi = "";
+                wifi = wifi + "\nIgen, van wifi! Ezért működöm én is!";
+                wifi = wifi + "\nTe is szeretnéd tudni a wifi jelszót?";
+                wifi = wifi + "\n Írd be, hogy /wifipass, talán ez segít!";
+                bot.sendMessage(chat_id, wifi, "Markdown");
+        }
+        else if (text == "/wifipass") {
+                String wifi = "";
+                wifi = wifi + "\nTe aztán valóban szeretnéd azt a wifi jelszót!";
+                wifi = wifi + "\nBiztosan kell neked?? Ugyan mi olyan fontos, hogy internetre kapcsolódjál?";
+                wifi = wifi + "\nDe te tudod:/wifiaccess";
+                bot.sendMessage(chat_id, wifi, "Markdown");
+        }
+        else if (text == "/wifiaccess") {
+                String wifi = "Wifi pass:12345678";
+                wifi = wifi + "\n Na itt van! Használd egészséggel!";
+                bot.sendMessage(chat_id, wifi, "Markdown");
+        }
+        else if (text == "/open") {
+                String open = "";
+                open = open + "\nAz ajtó ideiglenesen kinyitva!";
+                bot.sendMessage(chat_id, open, "Markdown");
+
+        }
+        else if (text == "/lockoverride") {
+                String lock="";
+                lock = lock + "\nAz ajtó bezárva tartása!!";
+                lock = lock + "\nFIGYELEM: A JELENLEGI FUNKCIÓ AKTIVÁLÁSA UTÁN NEM LEHET KÁRTYÁVAL KINYITNI AZ AJTÓT!!!";
+                lock = lock + "\nAZ /open PARANCS FELÜLÍRJA A LOCKOVERRIDE-OT!";
+                lockoverride = true;
+                bot.sendMessage(chat_id, lock, "Markdown");
+        }
+
+        else if (text == "/restart") {
+                String restart = "FIGYELEM: EZ EGY VESZÉLYES PARANCS!";
+                bot.sendMessage(chat_id, restart, "Markdown");
+                ESP.restart();
+
+        }
+
+        else if (text == "/reset") {
+                String reset = "FIGYELEM: EZ EGY VESZÉLYES PARANCS!";
+                bot.sendMessage(chat_id, reset, "Markdown");
+                ESP.reset();
+        }
+
+        else{
+          String asd = "Ilyen paranacs vagy nem létezik, vagy nincsen megfelelő jogosultsága a futtatáshoz!"
+          bot.sendMessage(chat_id, asd, "Markdown");
+        }
+}
+
+void isOwnerPrivilege(String text, String chat_id){
+        if (text=="/help") {
+                String welcome = "";
+                welcome = welcome + "/help : Az összes parancs kiíratása \n";
+                welcome = welcome + "/status : Az eszköz állapotának lekérdezése\n";
+                welcome = welcome + "/wifi : A jelenlegi WiFi jelszó lekérdezése\n";
+                welcome = welcome + "/open : Az ajtó kinyitása 3mp-ig\n";
+                welcome = welcome + "/lockoverride : Az ajtó kártyás beléptetésének felülbírálása";
+
+                bot.sendMessage(chat_id, welcome, "Markdown");
+        }
+
+        else if (text == "/status") {
+                String status = "";
+                status = status +"\n\nKapcsolódott wifi: "+ ssid;
+                status = status +"\nWifi csatorna: " + channel;
+                status = status +"\nAz eszköz IP címe: " + ip_address;
+                status = status +"\nAlhálózati maszk: " + subnet_mask;
+                status = status +"\nRouter IP: " + gateway;
+                if (lockoverride) status = status + "Lockoverride: AKTÍV";
+                else status = status + "Lockoverride: NEM AKTÍV";
+
+                bot.sendMessage(chat_id, status, "Markdown");
+        }
+        else if (text == "/wifi") {
+                String wifi = "";
+                wifi = wifi + "\nIgen, van wifi! Ezért működöm én is!";
+                wifi = wifi + "\nTe is szeretnéd tudni a wifi jelszót?";
+                wifi = wifi + "\n Írd be, hogy /wifipass, talán ez segít!";
+
+                bot.sendMessage(chat_id, wifi, "Markdown");
+        }
+        else if (text == "/wifipass") {
+                String wifi = "";
+                wifi = wifi + "\nTe aztán valóban szeretnéd azt a wifi jelszót!";
+                wifi = wifi + "\nBiztosan kell neked?? Ugyan mi olyan fontos, hogy internetre kapcsolódjál?";
+                wifi = wifi + "\nDe te tudod:/wifiaccess";
+
+                bot.sendMessage(chat_id, wifi, "Markdown");
+        }
+        else if (text == "/wifiaccess") {
+                String wifi = "Wifi pass:12345678";
+                wifi = wifi + "\n Na itt van! Használd egészséggel!";
+
+                bot.sendMessage(chat_id, wifi, "Markdown");
+        }
+        else if (text == "/open") {
+                String open = "";
+                open = open + "\nAz ajtó ideiglenesen kinyitva!";
+
+                bot.sendMessage(chat_id, open, "Markdown");
+
+        }
+        else if (text == "/lockoverride") {
+                String lock="";
+                lock = lock + "\nAz ajtó bezárva tartása!!";
+                lock = lock + "\nFIGYELEM: A JELENLEGI FUNKCIÓ AKTIVÁLÁSA UTÁN NEM LEHET KÁRTYÁVAL KINYITNI AZ AJTÓT!!!";
+                lock = lock + "\nAZ /open PARANCS FELÜLÍRJA A LOCKOVERRIDE-OT!";
+                lockoverride = true;
+
+                bot.sendMessage(chat_id, lock, "Markdown");
+        }
+
+        else if (text == "/restart") {
+                String restart = "FIGYELEM: EZ EGY VESZÉLYES PARANCS!";
+
+                bot.sendMessage(chat_id, restart, "Markdown");
+                ESP.restart();
+
+        }
+
+        else if (text == "/reset") {
+                String reset = "FIGYELEM: EZ EGY VESZÉLYES PARANCS!";
+
+                bot.sendMessage(chat_id, reset, "Markdown");
+                ESP.reset();
+        }
+        else{
+          String asd = "Ilyen paranacs nem létezik!"
+          bot.sendMessage(chat_id, asd, "Markdown");
+        }
+}
+
+
 void handleNewMessages(int numNewMessages) {
         for(int i=0; i<numNewMessages; i++) {
                 String chat_id = String(bot.messages[i].chat_id);
@@ -221,99 +455,12 @@ void handleNewMessages(int numNewMessages) {
 
                 bot.sendChatAction(chat_id, "typing");
                 Serial.println("Chat Id: "+chat_id + " Message:"+ text);
-                if (text=="/help") {
-                        String welcome = "";
-                        welcome = welcome + "/help : Az összes parancs kiíratása \n";
-                        welcome = welcome + "/status : Az eszköz állapotának lekérdezése\n";
-                        welcome = welcome + "/wifi : A jelenlegi WiFi jelszó lekérdezése\n";
-                        welcome = welcome + "/open : Az ajtó kinyitása 3mp-ig\n";
-                        welcome = welcome + "/lockoverride : Az ajtó kártyás beléptetésének felülbírálása";
 
-                        bot.sendMessage(chat_id, welcome, "Markdown");
-                }
-
-                else if (text == "/status") {
-                        String status = "";
-                        status = status +"\n\nKapcsolódott wifi: "+ ssid;
-                        status = status +"\nWifi csatorna: " + channel;
-                        status = status +"\nAz eszköz IP címe: " + ip_address;
-                        status = status +"\nAlhálózati maszk: " + subnet_mask;
-                        status = status +"\nRouter IP: " + gateway;
-                        if (lockoverride) status = status + "Lockoverride: AKTÍV";
-                        else status = status + "Lockoverride: AKTÍV";
-                        bot.sendMessage(chat_id, status, "Markdown");
-                }
-                else if (text == "/wifi") {
-                        String wifi = "";
-                        wifi = wifi + "\nIgen, van wifi! Ezért működöm én is!";
-                        wifi = wifi + "\nTe is szeretnéd tudni a wifi jelszót?";
-                        wifi = wifi + "\n Írd be, hogy /wifipass, talán ez segít!";
-                        bot.sendMessage(chat_id, wifi, "Markdown");
-                }
-                else if (text == "/wifipass") {
-                        String wifi = "";
-                        wifi = wifi + "\nTe aztán valóban szeretnéd azt a wifi jelszót!";
-                        wifi = wifi + "\nBiztosan kell neked?? Ugyan mi olyan fontos, hogy internetre kapcsolódjál?";
-                        wifi = wifi + "\nDe te tudod:/wifiaccess";
-                        bot.sendMessage(chat_id, wifi, "Markdown");
-                }
-                else if (text == "/wifiaccess") {
-                        String wifi = "Wifi pass:12345678";
-                        wifi = wifi + "\n Na itt van! Használd egészséggel!";
-                        bot.sendMessage(chat_id, wifi, "Markdown");
-                }
-                else if (text == "/open") {
-                        String open = "";
-                        open = open + "\nAz ajtó ideiglenesen kinyitva!";
-                        bot.sendMessage(chat_id, open, "Markdown");
-
-                }
-                else if (text == "/lockoverride") {
-                        String lock="";
-                        lock = lock + "\nAz ajtó bezárva tartása!!";
-                        lock = lock + "\nFIGYELEM: A JELENLEGI FUNKCIÓ AKTIVÁLÁSA UTÁN NEM LEHET KÁRTYÁVAL KINYITNI AZ AJTÓT!!!";
-                        lock = lock + "\nAZ /open PARANCS FELÜLÍRJA A LOCKOVERRIDE-OT!";
-                        lockoverride = true;
-                        bot.sendMessage(chat_id, lock, "Markdown");
-                }
-
-                else if (text == "/restart") {
-                        String restart = "FIGYELEM: EZ EGY VESZÉLYES PARANCS!";
-                        bool asd = true;
-                        for (int i = 0; i < sizeof(dev); i++) {
-                                if (dev[i].equals(chat_id)) {
-                                        bot.sendMessage(chat_id, restart, "Markdown");
-                                        asd = false;
-                                        ESP.restart();
-                                }
-                        }
-                        if (asd) {
-                                restart = restart + "CSAK A FEJLESZTŐK HASZNÁLHATJÁK EZT A PARANCSOT!";
-                                bot.sendMessage(chat_id, restart, "Markdown");
-                        }
-                }
-
-                else if (text == "/reset") {
-                        String reset = "FIGYELEM: EZ EGY VESZÉLYES PARANCS!";
-                        bool asd = true;
-                        for (int i = 0; i < sizeof(dev); i++) {
-                                if (dev[i].equals(chat_id)) {
-                                        bot.sendMessage(chat_id, reset, "Markdown");
-                                        asd = false;
-                                        ESP.reset();
-                                }
-                        }
-                        if (asd) {
-                                reset= reset + "CSAK A FEJLESZTŐK HASZNÁLHATJÁK EZT A PARANCSOT!";
-                                bot.sendMessage(chat_id, reset, "Markdown");
-                        }
-                }
-
-                else{
-                        String error = "Ilyen parancs nem létezik!";
-                        bot.sendMessage(chat_id, error, "Markdown");
-                }
-
+                /*
+                isGuestPrivilege(text, chat_id);
+                isMemberPrivilege(text, chat_id);
+                isDeveloperPrivilege(text, chat_id);*/
+                isOwnerPrivilege(text, chat_id);
         }
 }
 ////////////////////////////////////////////////////////////////////////////////
