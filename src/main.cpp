@@ -12,14 +12,6 @@
  * ------------------------------------------------
  */
 
-/* Card UID = file_name.dat
- * In file struct:
- * Telegram chat_id
- * Telegram privilege
- * Sector number
- * Sector random
- */
-
 /* Szükséges modulok
  * Valós random szám generátor [X]
  * Kártya olvasó/író           []
@@ -27,19 +19,18 @@
  * Telegram üzenet küldő       [X]
  * Telegram user premisson     []
  * OTA modul                   []
-
  */
 
 #include <Arduino.h>
 #include <SPI.h>
 #include <MFRC522.h>
 #include "ESP8266TrueRandom.h"
-#include <SD.h>
 #include <time.h>
 #include <ESP8266WiFi.h>
 #include <UniversalTelegramBot.h>
 #include <WiFiClientSecure.h>
-#define BOTtoken ""
+
+#define BOTtoken "424218094:AAFxTF_GKfTA-o9kRuPnEF-SpPsPFCff2mI"
 
 #define DEADBOLT 15 //BUG: Ha olyan GPIO porta állítjuk, melyet a kártya olvasó comportja használ, akkor !!crash!!
 
@@ -52,16 +43,16 @@ constexpr uint8_t SDA_PIN = 2;
 MFRC522 mfrc522(SDA_PIN, RST_PIN);
 int wifiStatus;
 
-const char* ssid     = "...---...";
-const char* password = "...---...";
+const char* ssid     = "Faszteternet";
+const char* password = "KolasCsulok";
 String ip_address, subnet_mask, gateway, channel;
 
-//HACK: SD kártyás beolvasásnál kell majd lefixálni a tömbök méretét!!
+//HACK: Beolvasásnál kell majd lefixálni a tömbök méretét!!
 String owner[] = {};
-String dev[] = {"12345678"};
+String dev[] = {"499406562"};
 String member[] = {};
 
-//File data; //SD Card modul
+
 
 byte block;
 byte sector_key;
@@ -70,6 +61,7 @@ String cardUid = "";
 
 int Bot_mtbs = 1000; //mean time between scan messages
 long Bot_lasttime;
+
 WiFiClientSecure client;
 UniversalTelegramBot bot(BOTtoken, client);
 void setup() {
@@ -82,13 +74,14 @@ void setup() {
                 Serial.begin(115200);
                 mfrc522.PCD_DumpVersionToSerial();
         }
-
         configTime(timezone * 3600, 0, "pool.ntp.org", "time.nist.gov");//ctime(&now)-val lehet lekérni
         while (!time(nullptr)) {
                 delay(500);
         }
-
         pinMode(DEADBOLT, INPUT);
+        digitalWrite(DEADBOLT, HIGH);
+        delay(1000);
+        digitalWrite(DEADBOLT, LOW);
 }
 bool isNfcModuleIsWorking(bool healty){
         //Menet közbeni NFC szenzor ellenőrzés
@@ -110,15 +103,13 @@ void isAllRandomData(){
         }
         card_data.toUpperCase();
         card_data += "FF";
-        //FIXME: uuidStr átalakítása byte formátumuvá
+        //HACK: uuidStr átalakítása byte formátumuvá
 
 
         //Random generált blokk
         ESP8266TrueRandom.uuid(uuidNumber);
         block = ESP8266TrueRandom.random(1,17);
 }
-
-
 /*
    String isNFCRead(){
    MFRC522::MIFARE_Key key;
@@ -179,36 +170,6 @@ void isAllRandomData(){
 
    }
  */
-
-/*
-   String isSDCardRead(String cardNumber){
-      //Kártya adatok beolvasása az SD kártyáról
-      cardNumber += ".dat";
-      data = SD.open(cardNumber);
-
-      if (data){
-
-
-
-      }
-      myFile.close();
-   }
- */
-
-/*
-   String isSDCardWrite(String cardNumber){
-      //Kártya adatok eltárolása az SD kártyára
-      cardNumber += ".dat"
-      data = SD.open(cardNumber, FILE_WRITE);
-
-      if (data){
-
-
-
-      }
-      myFile.close();
-   }
- */
 void wifiConnection(){
         WiFi.begin(ssid, password);
         while (WiFi.status() != WL_CONNECTED) {
@@ -234,7 +195,6 @@ void isMessage2AllUser(String text, String chat_id){
                 }
         }
 }
-
 void isGuestPrivilege(String text, String chat_id){
         if (text=="/help") {
                 String help = "";
@@ -255,8 +215,6 @@ void isGuestPrivilege(String text, String chat_id){
                 for (int i = 0; i < sizeof(owner); i++) {
                         bot.sendMessage(owner[i], msgtoowner, "Markdown");
                 }
-
-
         }
         else if (text == "/start") {
                 String start = "\nKedves Vendég! Önnnek nincsen hozzáférése az ajtó vezérléshez!";
@@ -275,10 +233,8 @@ void isMemberPrivilege(String text, String chat_id){
                 help = help + "/status : Az eszköz állapotának lekérdezése\n";
                 help = help + "/wifi : A jelenlegi WiFi jelszó lekérdezése\n";
                 help = help + "/open : Az ajtó kinyitása 3mp-ig\n";
-
                 bot.sendMessage(chat_id, help, "Markdown");
         }
-
         else if (text == "/status") {
                 String status = "";
                 time_t now = time(nullptr);
@@ -304,7 +260,6 @@ void isMemberPrivilege(String text, String chat_id){
                 String open = "";
                 open = open + "\nAz ajtó ideiglenesen kinyitva!";
                 bot.sendMessage(chat_id, open, "Markdown");
-
         }
         else{
                 String asd = "Ilyen paranacs vagy nem létezik, vagy nincsen megfelelő jogosultsága a futtatáshoz!";
@@ -318,10 +273,8 @@ void isDeveloperPrivilege(String text, String chat_id){
                 help = help + "/status : Az eszköz állapotának lekérdezése\n";
                 help = help + "/wifi : A jelenlegi WiFi jelszó lekérdezése\n";
                 help = help + "/open : Az ajtó kinyitása 3mp-ig\n";
-
                 bot.sendMessage(chat_id, help, "Markdown");
         }
-
         else if (text == "/status") {
                 String status = "";
                 ip_address = WiFi.localIP().toString();
@@ -339,11 +292,13 @@ void isDeveloperPrivilege(String text, String chat_id){
                 if (lockoverride) status = status + "\nLockoverride: AKTÍV";
                 else status = status + "\nLockoverride: AKTÍV";
                 status = status + "\nPrivilégium szint: Fejlesztő";
+                bot.sendMessage(chat_id, status, "Markdown");
+                status = "";
                 status += "\n--------------------------------------------------------------------";
                 status += "\n       INFORMÁCIÓ A FEJLESZTŐKNEK";//HACK:Modilos felületre méretezve XD!
                 status += "\n--------------------------------------------------------------------";
                 //BUG: BSOD ESP8266 módra!
-                /*status = status + "\nKód mérete: " + ESP.getSketchSize();
+                status = status + "\nKód mérete: " + ESP.getSketchSize();
                 status = status + "\nSzabad hely: " + ESP.getFreeSketchSpace();
                 status = status + "\nÚj firmware feltöltése OTA-n keresztül: ";
                 if (ESP.getSketchSize() > ESP.getFreeSketchSpace()) status += "NEM LEHETSÉGES! :-(";
@@ -353,24 +308,19 @@ void isDeveloperPrivilege(String text, String chat_id){
                 status = status + "\nSDK verzió: " + ESP.getSdkVersion();
                 status = status + "\nSzabad heap: " + ESP.getFreeHeap();
                 status = status + "\nA kódról készített MD5 kivonat: \n|" + ESP.getSketchMD5()+ "|";
-                status += "\n-----------------------------------------------------------------------";*/
+                status += "\n-----------------------------------------------------------------------";
                 //BUG: BSOD ESP8266 módra!
-
                 bot.sendMessage(chat_id, status, "Markdown");
         }
-
-
         else if (text == "/open") {
                 String open = "";
                 open = open + "\nAz ajtó ideiglenesen kinyitva!";
                 bot.sendMessage(chat_id, open, "Markdown");
-
         }
         else if (text == "/restart") {
                 String restart = "FIGYELEM: EZ EGY VESZÉLYES PARANCS!";
                 bot.sendMessage(chat_id, restart, "Markdown");
                 ESP.restart();
-
         }
 
         else if (text == "/reset") {
@@ -384,23 +334,18 @@ void isDeveloperPrivilege(String text, String chat_id){
                 bot.sendMessage(chat_id, asd, "Markdown");
         }
 }
-
 void isOwnerPrivilege(String text, String chat_id){
         if (text=="/help") {
                 String help = "";
-
                 help = help + "/help : Az összes parancs kiíratása \n";
                 help = help + "/status : Az eszköz állapotának lekérdezése\n";
                 help = help + "/wifi : A jelenlegi WiFi jelszó lekérdezése\n";
                 help = help + "/open : Az ajtó kinyitása 3mp-ig\n";
                 help = help + "/lockoverride : Az ajtó kártyás beléptetésének felülbírálása";
-
                 bot.sendMessage(chat_id, help, "Markdown");
         }
-
         else if (text == "/status") {
                 String status = "";
-
                 time_t now = time(nullptr);
                 status = status + ctime(&now) + "\n\n";
                 status = status +"\n\nKapcsolódott wifi: "+ ssid;
@@ -418,7 +363,6 @@ void isOwnerPrivilege(String text, String chat_id){
                 wifi = wifi + "\nIgen, van wifi! Ezért működöm én is!";
                 wifi = wifi + "\nTe is szeretnéd tudni a wifi jelszót?";
                 wifi = wifi + "\n Írd be, hogy /wifipass, talán ez segít!";
-
                 bot.sendMessage(chat_id, wifi, "Markdown");
         }
         else if (text == "/wifipass") {
@@ -426,21 +370,17 @@ void isOwnerPrivilege(String text, String chat_id){
                 wifi = wifi + "\nTe aztán valóban szeretnéd azt a wifi jelszót!";
                 wifi = wifi + "\nBiztosan kell neked?? Ugyan mi olyan fontos, hogy internetre kapcsolódjál?";
                 wifi = wifi + "\nDe te tudod:/wifiaccess";
-
                 bot.sendMessage(chat_id, wifi, "Markdown");
         }
         else if (text == "/wifiaccess") {
                 String wifi = "Wifi pass:12345678";
                 wifi = wifi + "\n Na itt van! Használd egészséggel!";
-
                 bot.sendMessage(chat_id, wifi, "Markdown");
         }
         else if (text == "/open") {
                 String open = "";
                 open = open + "\nAz ajtó ideiglenesen kinyitva!";
-
                 bot.sendMessage(chat_id, open, "Markdown");
-
         }
         else if (text == "/lockoverride") {
                 String lock="";
@@ -448,39 +388,29 @@ void isOwnerPrivilege(String text, String chat_id){
                 lock = lock + "\nFIGYELEM: A JELENLEGI FUNKCIÓ AKTIVÁLÁSA UTÁN NEM LEHET KÁRTYÁVAL KINYITNI AZ AJTÓT!!!";
                 lock = lock + "\nAZ /open PARANCS FELÜLÍRJA A LOCKOVERRIDE-OT!";
                 lockoverride = true;
-
                 bot.sendMessage(chat_id, lock, "Markdown");
         }
         else if (text.substring(0,7) == "/msg2all") {
                 String text = "";
-
-
                 isMessage2AllUser(text,chat_id);
                 bot.sendMessage(chat_id, "Üzenet elküldve!", "Markdown");
         }
 
         else if (text == "/restart") {
                 String restart = "FIGYELEM: EZ EGY VESZÉLYES PARANCS!";
-
                 bot.sendMessage(chat_id, restart, "Markdown");
                 ESP.restart();
-
         }
-
         else if (text == "/reset") {
                 String reset = "FIGYELEM: EZ EGY VESZÉLYES PARANCS!";
-
                 bot.sendMessage(chat_id, reset, "Markdown");
                 ESP.reset();
         }
-
         else{
                 String asd = "Ilyen paranacs nem létezik!";
                 bot.sendMessage(chat_id, asd, "Markdown");
         }
 }
-
-
 void handleNewMessages(int numNewMessages) {
         for(int i=0; i<numNewMessages; i++) {
                 String chat_id = String(bot.messages[i].chat_id);
@@ -527,7 +457,6 @@ void handleNewMessages(int numNewMessages) {
 }
 ////////////////////////////////////////////////////////////////////////////////
 void loop() {
-
         if (WiFi.status() !=  WL_CONNECTED) {//Újra csatlakozás
                 if (debug) Serial.println("Wifi disconnected!");
                 wifiConnection();
