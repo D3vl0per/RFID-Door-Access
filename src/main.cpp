@@ -58,7 +58,7 @@ String ip_address, subnet_mask, gateway, channel;
 
 //HACK: SD kártyás beolvasásnál kell majd lefixálni a tömbök méretét!!
 String owner[] = {};
-String dev[] = {"123456789"};
+String dev[] = {"12345678"};
 String member[] = {};
 
 //File data; //SD Card modul
