@@ -14,6 +14,3 @@ install:
     
 script:
     - platformio run
-
- notifications:
-    slack: derimiksa:B5Cwrw2JqXG1E62ZGixch1nZ
